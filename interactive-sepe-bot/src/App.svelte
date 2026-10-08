@@ -6,7 +6,7 @@
   import Problem from './slides/Problem.svelte';
   import Night from './slides/Night.svelte';
   import Hit from './slides/Hit.svelte';
-  import Today from './slides/Today.svelte';
+  import Code from './slides/Code.svelte';
 
   const slides = [
     { component: Cover, theme: 'sage', chapter: 'Intro' },
@@ -15,7 +15,7 @@
     { component: HowItWorks, theme: 'cobalt', chapter: '02 The counter-move' },
     { component: Night, theme: 'paper', chapter: '03 The wait' },
     { component: Hit, theme: 'night', chapter: '03 The wait' },
-    { component: Today, theme: 'sage', chapter: '04 The result' },
+    { component: Code, theme: 'sage', chapter: '04 The code' },
   ];
 
   let current = $state(0);

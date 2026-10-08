@@ -96,11 +96,38 @@ export const moment = [
   { time: 'You', text: 'Walk to the computer and book the appointment on the open page.' },
 ];
 
-export const result = [
-  { title: 'Asks every 20 seconds', body: 'Day and night, without getting tired or distracted.' },
-  { title: 'Speaks only when it matters', body: 'A Telegram message when a slot appears, silence in between.' },
-  { title: 'Shows you the slot', body: 'A screenshot arrives with the alert, before you reach the computer.' },
-  { title: 'Holds the page for you', body: 'It stops and waits until you have booked.' },
-  { title: 'Watches for Presencial', body: 'An alert if an in-person option ever appears.' },
-  { title: 'Keeps proof', body: 'SEPE’s justificante, saved every 5 minutes while nothing is available.' },
+export const REPO_URL = 'https://github.com/miltostsalekkas/Sepe_repo';
+
+// How sepe_bot.py works, in the order things happen.
+export const howItWorks = [
+  { title: 'Fill in the form', body: 'Playwright opens Chromium and fills in postal code, trámite, subtrámite and NIE, then picks the Telefónica channel.' },
+  { title: 'Read the answer', body: 'If the page contains “no podemos ofrecerle citas”, there is no slot. Anything else counts as a possible appointment.' },
+  { title: 'Repeat', body: 'Every 20 seconds (CHECK_INTERVAL). After 3 failed checks in a row it restarts the browser.' },
+  { title: 'Alert and pause', body: 'On a slot, or a channel other than Telefónica, it sends a Telegram message with a screenshot and stops until you press Enter.' },
+  { title: 'Keep proof', body: 'While nothing is available, it saves SEPE’s justificante PDF every 5 minutes in justificantes/.' },
+  { title: 'Log', body: 'Every event is one JSON line in sepe_log.jsonl; screenshots go to screenshots/.' },
+];
+
+// Setup steps shown as tabs, each with commands to copy.
+export const setup = [
+  {
+    label: 'Clone',
+    text: 'Get the code from GitHub.',
+    code: 'git clone https://github.com/miltostsalekkas/Sepe_repo.git\ncd Sepe_repo',
+  },
+  {
+    label: 'Install',
+    text: 'Python 3.9+ and the browser Playwright drives.',
+    code: 'pip install -r requirements.txt\npython -m playwright install chromium',
+  },
+  {
+    label: 'Configure',
+    text: 'Copy the template and fill in your own values. .env is ignored by git.',
+    code: 'copy .env.example .env    # macOS/Linux: cp .env.example .env\n\nSEPE_NIE=\nSEPE_POSTAL_CODE=\nTELEGRAM_BOT_TOKEN=\nTELEGRAM_CHAT_ID=',
+  },
+  {
+    label: 'Run',
+    text: 'A browser window opens and the checks start. Ctrl+C stops it.',
+    code: 'python sepe_bot.py',
+  },
 ];
