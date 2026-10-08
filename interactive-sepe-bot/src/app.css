@@ -1,0 +1,175 @@
+:root {
+  --sans: 'Instrument Sans', 'Helvetica Neue', Helvetica, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --sage: #c8d6c3;
+  --sage-ink: #1d2b22;
+  --vermilion: #cc3a0e;
+  --paper: #ecebe4;
+  --ink: #141414;
+  --cobalt: #1f3fbf;
+  --cream: #f3f1ea;
+  --night: #15171c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--night);
+}
+
+body {
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
+
+/*
+ * Poster themes. Each sets the same variables so every
+ * slide component can use them without knowing its theme.
+ *   --bg      background
+ *   --fg      body text
+ *   --accent  display type and highlights
+ *   --line    grid lines and rules
+ *   --soft    quiet panels
+ *   --on-accent  text on an --accent fill
+ */
+.theme-sage {
+  --bg: var(--sage);
+  --fg: var(--sage-ink);
+  --accent: var(--vermilion);
+  --line: rgba(204, 58, 14, 0.35);
+  --soft: rgba(255, 255, 255, 0.35);
+  --on-accent: #fff6ef;
+}
+
+.theme-paper {
+  --bg: var(--paper);
+  --fg: var(--ink);
+  --accent: var(--cobalt);
+  --line: rgba(20, 20, 20, 0.16);
+  --soft: rgba(255, 255, 255, 0.6);
+  --on-accent: var(--cream);
+}
+
+.theme-cobalt {
+  --bg: var(--cobalt);
+  --fg: var(--cream);
+  --accent: var(--sage);
+  --line: rgba(243, 241, 234, 0.22);
+  --soft: rgba(255, 255, 255, 0.1);
+  --on-accent: var(--sage-ink);
+}
+
+.theme-vermilion {
+  --bg: #c33a0f;
+  --fg: #fff4ec;
+  --accent: #fff4ec;
+  --line: rgba(255, 244, 236, 0.28);
+  --soft: rgba(0, 0, 0, 0.14);
+  --on-accent: #c33a0f;
+}
+
+.theme-night {
+  --bg: var(--night);
+  --fg: #ecebe4;
+  --accent: #f26a3d;
+  --line: rgba(236, 235, 228, 0.14);
+  --soft: rgba(255, 255, 255, 0.06);
+  --on-accent: var(--night);
+}
+
+/* Shared type */
+.label {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.display {
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 0.92;
+  color: var(--accent);
+}
+
+.display em {
+  font-style: italic;
+  letter-spacing: -0.03em;
+}
+
+.body-text {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.55;
+  max-width: 560px;
+}
+
+/* Shared controls */
+.btn {
+  min-height: 44px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1.5px solid currentColor;
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.btn.solid {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.segmented {
+  display: inline-flex;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.segmented button {
+  min-height: 40px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.segmented button[aria-pressed='true'] {
+  background: var(--accent);
+  color: var(--on-accent);
+}

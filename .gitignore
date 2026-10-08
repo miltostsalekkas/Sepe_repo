@@ -1,0 +1,15 @@
+# Personal settings
+.env
+Config.py
+
+# Bot output: contains the NIE and personal data
+sepe_log.jsonl
+screenshots/
+justificantes/
+*.png
+*.pdf
+
+# Python
+__pycache__/
+*.pyc
+.venv/
