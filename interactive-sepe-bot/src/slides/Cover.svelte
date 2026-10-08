@@ -1,26 +1,26 @@
 <script>
+  import { t } from '../i18n/index.svelte.js';
+
   let { go } = $props();
+
+  let c = $derived(t().cover);
+  let ui = $derived(t().ui);
 </script>
 
 <div class="cover">
-  <div class="tag label">Case study</div>
+  <div class="tag label">{c.tag}</div>
 
-  <h1 class="display">
-    1,839 tries <br />for <em>one</em> <br />appointment
-  </h1>
+  <h1 class="display">{@html c.title}</h1>
 
   <div class="foot">
-    <p class="body-text">
-      Getting a cita previa at SEPE has become a race against resellers’ bots. This is the story of how we
-      raced back, with a bot of our own, and found a free appointment.
-    </p>
+    <p class="body-text">{c.body}</p>
     <button type="button" class="btn solid" onclick={() => go(1)}>
-      Start
+      {c.start}
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
     </button>
   </div>
 
-  <div class="swipe label" aria-hidden="true">Swipe →</div>
+  <div class="swipe label" aria-hidden="true">{ui.swipe}</div>
 </div>
 
 <style>
@@ -44,7 +44,7 @@
   }
 
   h1 {
-    font-size: clamp(64px, 12vw, 176px);
+    font-size: clamp(56px, 11vw, 168px);
   }
 
   .foot {
@@ -59,5 +59,12 @@
     right: clamp(16px, 6vw, 80px);
     bottom: 96px;
     color: var(--accent);
+  }
+
+  /* No swiping when the page scrolls. */
+  @media (max-width: 760px) {
+    .swipe {
+      display: none;
+    }
   }
 </style>

@@ -1,7 +1,11 @@
 <script>
-  import { hours, TRIES } from '../data.js';
+  import { HOURS as hours, TRIES } from '../data.js';
+  import { t } from '../i18n/index.svelte.js';
 
   let { active } = $props();
+
+  let c = $derived(t().night);
+  let locale = $derived(t().locale);
 
   // Tallest bar, as a share of the chart height (leaves room for the count).
   const BAR_MAX = 88;
@@ -31,12 +35,12 @@
     progress = 0;
     const tick = (now) => {
       // Ease out so the last hours land gently.
-      const t = Math.min(1, (now - start) / duration);
-      progress = 1 - Math.pow(1 - t, 2);
+      const elapsed = Math.min(1, (now - start) / duration);
+      progress = 1 - Math.pow(1 - elapsed, 2);
       // Follow the hour that is currently filling up.
       const filling = hours.findIndex((_, i) => fill(i) < 1);
       selected = filling === -1 ? hours.length - 1 : filling;
-      if (t < 1) raf = requestAnimationFrame(tick);
+      if (elapsed < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
   }
@@ -55,20 +59,17 @@
 <div class="night">
   <div class="top">
     <div class="head">
-      <div class="label kicker">03 — The wait</div>
-      <h2 class="display">Then it asked <em>all night</em></h2>
-      <p class="body-text">
-        Every 20 seconds, about 165 times an hour, while everyone slept. SEPE’s answer: no, no, no… until
-        09:15 the next morning.
-      </p>
+      <div class="label kicker">{c.kicker}</div>
+      <h2 class="display">{@html c.title}</h2>
+      <p class="body-text">{c.body}</p>
     </div>
 
     <div class="count">
-      <div class="num" aria-live="off">{counter.toLocaleString('en-US')}</div>
-      <div class="label">Answers from SEPE</div>
+      <div class="num" aria-live="off">{counter.toLocaleString(locale, { useGrouping: 'always' })}</div>
+      <div class="label">{c.count}</div>
       <button type="button" class="btn" onclick={replay}>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></svg>
-        Replay the night
+        {c.replay}
       </button>
     </div>
   </div>
@@ -82,7 +83,7 @@
           class:on={i === selected}
           class:found={h.found}
           aria-pressed={i === selected}
-          aria-label="{h.label}: {h.total} checks"
+          aria-label="{h.label}: {c.checks(h.total)}"
           onclick={() => (selected = i)}
         >
           <span class="plot">
@@ -96,8 +97,8 @@
 
     <div class="detail">
       <span class="d-hour">{hour.label}</span>
-      <span class="label">{hour.total} checks</span>
-      <span class="d-note">{hour.note}</span>
+      <span class="label">{c.checks(hour.total)}</span>
+      <span class="d-note">{c.notes[selected]}</span>
     </div>
   </div>
 </div>

@@ -1,7 +1,10 @@
 <script>
-  import { steps } from '../data.js';
+  import { t } from '../i18n/index.svelte.js';
 
   let { active } = $props();
+
+  let c = $derived(t().how);
+  let steps = $derived(c.steps);
 
   let selected = $state(0);
   let playing = $state(false);
@@ -42,19 +45,16 @@
 
 <div class="how">
   <div class="head">
-    <div class="label kicker">02 — The counter-move · one check</div>
-    <h2 class="display">One check, <em>eight</em> steps</h2>
-    <p class="body-text">
-      Every 20 seconds the bot fills in SEPE’s form from scratch, the same way you would by hand. Press play
-      to watch one check, or pick a step.
-    </p>
+    <div class="label kicker">{c.kicker}</div>
+    <h2 class="display">{@html c.title}</h2>
+    <p class="body-text">{c.body}</p>
     <button type="button" class="btn" onclick={() => (playing ? stop() : play())}>
       {#if playing}
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" /><rect x="14" y="5" width="4" height="14" /></svg>
-        Pause
+        {c.pause}
       {:else}
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z" /></svg>
-        Play a check
+        {c.play}
       {/if}
     </button>
   </div>
@@ -77,7 +77,7 @@
 
   {#key selected}
     <div class="detail">
-      <span class="d-num label">Step {selected + 1} of {steps.length}</span>
+      <span class="d-num label">{c.stepOf(selected + 1, steps.length)}</span>
       <h3>{step.title}</h3>
       <p>{step.body}</p>
     </div>

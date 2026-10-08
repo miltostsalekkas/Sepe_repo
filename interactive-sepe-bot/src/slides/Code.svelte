@@ -1,21 +1,24 @@
 <script>
-  import { REPO_URL, howItWorks, setup, sources } from '../data.js';
+  import { REPO_URL, SETUP_CODE, SOURCE_URLS } from '../data.js';
+  import { t } from '../i18n/index.svelte.js';
 
   let { go } = $props();
 
+  let c = $derived(t().code);
+
   let step = $state(0);
   let copied = $state(false);
-  let current = $derived(setup[step]);
+  let code = $derived(SETUP_CODE[step]);
   let timer;
 
   // Only the command lines are copied, not the .env field names.
-  function commandsOf(code) {
-    return code.split('\n\n')[0];
+  function commandsOf(text) {
+    return text.split('\n\n')[0];
   }
 
   async function copy() {
     try {
-      await navigator.clipboard.writeText(commandsOf(current.code));
+      await navigator.clipboard.writeText(commandsOf(code));
       copied = true;
       clearTimeout(timer);
       timer = setTimeout(() => (copied = false), 1600);
@@ -34,19 +37,16 @@
 
 <div class="code-slide">
   <div class="head">
-    <div class="label kicker">04 — The code</div>
-    <h2 class="display">How it <em>works</em></h2>
-    <p class="body-text">
-      The bot is a single Python script, <code>sepe_bot.py</code>, built on Playwright. The code is public on
-      GitHub: read it, run it for your own appointment, or adapt it to another trámite.
-    </p>
+    <div class="label kicker">{c.kicker}</div>
+    <h2 class="display">{@html c.title}</h2>
+    <p class="body-text">{@html c.body}</p>
   </div>
 
   <div class="cols">
     <section class="col" aria-labelledby="how-title">
-      <h3 id="how-title" class="label col-title">What the script does</h3>
+      <h3 id="how-title" class="label col-title">{c.whatTitle}</h3>
       <ol class="how">
-        {#each howItWorks as item, i}
+        {#each c.howItWorks as item, i}
           <li>
             <span class="n label">{String(i + 1).padStart(2, '0')}</span>
             <div>
@@ -59,10 +59,10 @@
     </section>
 
     <section class="col" aria-labelledby="setup-title">
-      <h3 id="setup-title" class="label col-title">Run it yourself</h3>
+      <h3 id="setup-title" class="label col-title">{c.runTitle}</h3>
 
-      <div class="tabs" role="group" aria-label="Setup step">
-        {#each setup as s, i}
+      <div class="tabs" role="group" aria-label={c.setupStep}>
+        {#each c.setup as s, i}
           <button type="button" aria-pressed={i === step} onclick={() => pick(i)}>
             <span class="label">{i + 1}</span>
             {s.label}
@@ -70,13 +70,16 @@
         {/each}
       </div>
 
-      <p class="step-text">{current.text}</p>
+      <p class="step-text">{c.setup[step].text}</p>
 
       <div class="terminal">
-        <pre><code>{current.code}</code></pre>
-        <button type="button" class="copy" onclick={copy} aria-label="Copy commands">
-          {copied ? 'Copied' : 'Copy'}
-        </button>
+        <div class="term-bar">
+          <span class="label">terminal</span>
+          <button type="button" class="copy" onclick={copy} aria-label={c.copyLabel}>
+            {copied ? c.copied : c.copy}
+          </button>
+        </div>
+        <pre lang="en"><code>{code}</code></pre>
       </div>
 
       <a class="btn solid repo" href={REPO_URL} target="_blank" rel="noopener noreferrer">
@@ -84,27 +87,22 @@
         miltostsalekkas/Sepe_repo
       </a>
 
-      <p class="privacy">
-        Your .env, the log, screenshots and justificantes contain your NIE. They stay on your computer and are
-        excluded from git.
-      </p>
+      <p class="privacy">{c.privacy}</p>
     </section>
   </div>
 
   <div class="foot">
     <div class="notes">
-      <p class="note">
-        Figures from the bot’s own log, 7 October 21:37 to 8 October 09:30. On reselling:
-      </p>
+      <p class="note">{c.dataNote}</p>
       <ul class="sources">
-        {#each sources as s}
-          <li><a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></li>
+        {#each SOURCE_URLS as url, i}
+          <li><a href={url} target="_blank" rel="noopener noreferrer">{c.sources[i]}</a></li>
         {/each}
       </ul>
     </div>
     <button type="button" class="btn" onclick={() => go(0)}>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
-      Back to start
+      {c.back}
     </button>
   </div>
 </div>
@@ -132,7 +130,7 @@
     font-size: clamp(48px, 5.6vw, 84px);
   }
 
-  .head code {
+  .head :global(code) {
     font-family: var(--mono);
     font-size: 0.9em;
   }
@@ -234,16 +232,29 @@
   }
 
   .terminal {
-    position: relative;
     background: var(--sage-ink);
     color: #e9efe6;
     border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .term-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px 6px 16px;
+    border-bottom: 1px solid rgba(233, 239, 230, 0.15);
+  }
+
+  .term-bar .label {
+    font-size: 11px;
+    opacity: 0.6;
   }
 
   pre {
     margin: 0;
-    padding: 16px 84px 16px 16px;
-    min-height: 92px;
+    padding: 14px 16px;
+    min-height: 76px;
     overflow-x: auto;
     font-family: var(--mono);
     font-size: 14px;
@@ -251,9 +262,6 @@
   }
 
   .copy {
-    position: absolute;
-    top: 8px;
-    right: 8px;
     min-height: 36px;
     min-width: 64px;
     padding: 6px 12px;
@@ -318,6 +326,10 @@
   }
 
   @media (max-width: 560px) {
+    pre {
+      font-size: 12.5px;
+    }
+
     .tabs {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }

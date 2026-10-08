@@ -1,10 +1,13 @@
 <script>
-  import { moment } from '../data.js';
+  import { t } from '../i18n/index.svelte.js';
 
   let { active } = $props();
 
+  let c = $derived(t().moment);
+  let moment = $derived(c.events);
+
   // How many events are shown so far; they appear one by one.
-  let shown = $state(moment.length);
+  let shown = $state(4);
   let timer;
   let played = false;
 
@@ -29,21 +32,18 @@
 
 <div class="moment">
   <div class="head">
-    <div class="label kicker">03 — The wait · the moment</div>
-    <h2 class="display"><em>09:15:51.</em> <br />Found one.</h2>
-    <p class="body-text">
-      After 1,839 tries, the answer changed. With resellers’ bots hunting the same slots, seconds matter.
-      This is what happens right after.
-    </p>
+    <div class="label kicker">{c.kicker}</div>
+    <h2 class="display">{@html c.title}</h2>
+    <p class="body-text">{c.body}</p>
     <button type="button" class="btn" onclick={play}>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></svg>
-      Replay
+      {c.replay}
     </button>
   </div>
 
   <ol class="flow">
     {#each moment as e, i}
-      <li class:found={e.found} class:visible={i < shown}>
+      <li class:found={i === 0} class:visible={i < shown}>
         <span class="time label">{e.time}</span>
         <span class="dot" aria-hidden="true"></span>
         <span class="text">{e.text}</span>
@@ -79,7 +79,7 @@
     color: var(--fg);
   }
 
-  h2 em {
+  h2 :global(em) {
     color: var(--accent);
   }
 

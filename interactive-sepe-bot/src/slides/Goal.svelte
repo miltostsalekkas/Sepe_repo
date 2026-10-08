@@ -1,23 +1,19 @@
 <script>
-  import { messages } from '../data.js';
+  import { MESSAGES } from '../data.js';
+  import { t } from '../i18n/index.svelte.js';
+
+  let c = $derived(t().goal);
 
   let picked = $state('hit');
-  let msg = $derived(messages.find((m) => m.key === picked));
+  let msg = $derived(MESSAGES.find((m) => m.key === picked));
 </script>
 
 <div class="goal">
   <div class="left">
-    <div class="label kicker">02 — The counter-move</div>
-    <h2>Fight the bots <em>with a bot.</em></h2>
-    <p class="body-text">
-      If bots empty the calendar, a person refreshing by hand will always lose. So we turned their tool
-      around: a small bot that asks for <strong>one appointment, for one person</strong>, and never sells
-      anything.
-    </p>
-    <p class="body-text">
-      It fills in SEPE’s form every 20 seconds, day and night, and stays silent until the answer changes.
-      Then it sends one Telegram message, wherever you are. Tap the messages on the phone.
-    </p>
+    <div class="label kicker">{c.kicker}</div>
+    <h2>{@html c.title}</h2>
+    <p class="body-text">{@html c.p1}</p>
+    <p class="body-text">{c.p2}</p>
   </div>
 
   <div class="right">
@@ -34,19 +30,22 @@
 
       <div class="chat">
         {#key picked}
-          <div class="bubble" class:loud={msg.loud}>
+          <div class="bubble" class:loud={msg.loud} lang="en">
             <div class="b-title">{msg.title}</div>
             {#each msg.lines as line}
               <div class="b-line">{line}</div>
             {/each}
+            {#if msg.screenshot}
+              <div class="b-line note" lang={null}>{c.screenshot}</div>
+            {/if}
             <div class="b-time">{msg.time}</div>
           </div>
         {/key}
       </div>
 
-      <div class="tabs" role="group" aria-label="Message type">
-        {#each messages as m}
-          <button type="button" aria-pressed={m.key === picked} onclick={() => (picked = m.key)}>{m.tab}</button>
+      <div class="tabs" role="group" aria-label={c.messageType}>
+        {#each MESSAGES as m}
+          <button type="button" aria-pressed={m.key === picked} onclick={() => (picked = m.key)}>{c.tabs[m.key]}</button>
         {/each}
       </div>
     </div>
@@ -92,7 +91,7 @@
     font-weight: 700;
   }
 
-  h2 em {
+  h2 :global(em) {
     font-weight: 400;
     color: var(--accent);
   }
@@ -182,6 +181,11 @@
 
   .b-title {
     font-weight: 700;
+  }
+
+  .note {
+    color: #5b5b55;
+    font-style: italic;
   }
 
   .b-time {

@@ -1,5 +1,8 @@
 <script>
-  import { NO_SLOTS, problemFacts, tryReply } from '../data.js';
+  import { NO_SLOTS } from '../data.js';
+  import { t } from '../i18n/index.svelte.js';
+
+  let c = $derived(t().problem);
 
   let tries = $state(0);
   let busy = $state(false);
@@ -17,20 +20,13 @@
 
 <div class="problem">
   <div class="text">
-    <div class="label">01 — The problem</div>
-    <h2 class="display">“No podemos <br />ofrecerle <em>citas</em>”</h2>
-    <p class="body-text">
-      To start an alta inicial de prestación contributiva, you first ask SEPE for a cita previa. In Barcelona,
-      the booking page answers with the same sentence almost every time.
-    </p>
-    <p class="body-text">
-      It is not only demand. Intermediaries have been reported running bots that ask SEPE nonstop, grab
-      each slot the moment it is released and <strong>sell it back</strong> to people who need it, for an
-      appointment that is free.
-    </p>
+    <div class="label">{c.kicker}</div>
+    <h2 class="display" lang="es">“No podemos <br />ofrecerle <em>citas</em>”</h2>
+    <p class="body-text">{c.p1}</p>
+    <p class="body-text">{@html c.p2}</p>
 
     <div class="facts">
-      {#each problemFacts as f}
+      {#each c.facts as f}
         <div class="fact">
           <div class="f-value">{f.value}</div>
           <div class="label">{f.label}</div>
@@ -40,7 +36,7 @@
   </div>
 
   <div class="try">
-    <div class="label">Try it yourself</div>
+    <div class="label">{c.tryLabel}</div>
 
     <div class="screen">
       <div class="screen-head label">citaprevia-sede.sepe.gob.es</div>
@@ -48,23 +44,23 @@
         {#if busy}
           <div class="loading" aria-hidden="true"><span></span><span></span><span></span></div>
         {:else if tries === 0}
-          <p class="idle">Press the button to ask for an appointment.</p>
+          <p class="idle">{c.idle}</p>
         {:else}
           {#key tries}
-            <p class="answer">{NO_SLOTS}</p>
+            <p class="answer" lang="es">{NO_SLOTS}</p>
           {/key}
         {/if}
       </div>
     </div>
 
     <button type="button" class="btn ask" onclick={ask} disabled={busy}>
-      Ask SEPE for an appointment
+      {c.ask}
     </button>
 
     <div class="tally" aria-live="polite">
       {#if tries > 0}
-        <span class="count">Attempt {tries}</span>
-        <span>{tryReply(tries)}</span>
+        <span class="count">{c.attempt(tries)}</span>
+        <span>{c.reply(tries)}</span>
       {/if}
     </div>
   </div>
